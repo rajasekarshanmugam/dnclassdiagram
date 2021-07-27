@@ -1,0 +1,8 @@
+{
+  "profiles": {
+    "DnClassDiagram": {
+      "commandName": "Project",
+      "commandLineArgs": "export -i \"DnClassDiagram.dll\" -o \"DnClassDiagram.svg\" -d \"d:\\libraries\\graphviz\\bin\\dot.exe\" "
+    }
+  }
+}
