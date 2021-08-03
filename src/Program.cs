@@ -53,8 +53,11 @@ namespace DnClassDiagram
 					new Option<string>(new[]{"-i","--inputfile"}, "input assembly path"){ IsRequired = true },
 					new Option<string>(new[]{"-o", "--outputfile"}, "output file path"){ IsRequired = true },
 					new Option<string>(new[]{"-d", "--dotexepath"}, "dot.exe file path"){ IsRequired = false },
+					new Option<string>(new[]{"-n", "--namespace"}, "namespace to extract"){ IsRequired = false },
+					new Option<string>(new[]{"-r", "--regex"}, "regex pattern for type"){ IsRequired = false },
+					
 				},
-				handler: CommandHandler.Create<IConsole, string, string, string>(DoExport)
+				handler: CommandHandler.Create<IConsole, string, string, string, string, string>(DoExport)
 			);
 
 			var returnValue = await new CommandLineBuilder(app)

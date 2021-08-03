@@ -1,0 +1,85 @@
+@using System
+@using System.Linq
+@Model IEnumerable<DnClassDiagram.Models.DNClassInfo> 
+
+digraph "ClassDiagram"
+{
+	graph[overlap=false, splines=true]
+	fontname = "Segoe UI"
+	fontsize = 8
+	bgcolor = "#fefefe"
+	tooltip = "Class Diagram"
+
+	node [
+		shape = "record"
+		fontname = "Segoe UI"
+		fontsize = 10
+		bgcolor = white
+	]
+
+	edge [
+		fontname = "Segoe UI"
+		fontsize = 8
+	]
+
+	@* all classes *@
+	@foreach( var classInfo in Model.Classes ){
+		var objectId = classInfo.Name.ToLower();
+		var objectName = classInfo.Name;
+		var objectPortName = "c." + objectName;
+
+		@:@objectId [
+			@:shape = none
+			@:label = <
+				<table border="0" cellborder="0" cellspacing="0" cellpadding="5" align="left">
+				<tr>
+					<td port="@objectPortName" bgcolor="green" valign="top" align="left"><img src="_images/ClassIcon_32x.png" /></td>
+					<td bgcolor="green" colspan="2" valign="middle">
+						<font color="white"><b>@objectName</b></font>
+					</td>
+				</tr>
+			@foreach( var property in classInfo.Properties.OrderBy( p => p.Name ) ) {
+				var fieldName = property.Name;
+				var fieldType = property.Type;
+				var fieldPortName = "f." + fieldName;
+				<tr><td port="@fieldPortName"><img src="_images/PropertyIcon_16x.png" /></td><td align="left">@fieldName</td><td align="left">@fieldType</td></tr>
+			}
+				</table>
+					@:>
+		@:]
+	}
+
+	@* 1-many *@
+	edge [ arrowhead = "normal" headlabel = "0..1" taillabel = "0..*" color = "brown" ]
+
+	@foreach( var classInfo in Model.Classes ){
+		var objectId = classInfo.Name.ToLower();
+		var objectName = classInfo.Name;
+		var objectPortName = "c." + objectName;
+		var objectId = objectAndFields.Key;
+
+		@foreach( var property in classInfo.Properties.OrderBy( p => p.Name ) ) {
+			var fieldName = property.Name;
+			var fieldType = property.Type;
+			var fieldPortName = "f." + fieldName;
+			
+			var fieldTargetTypeId = objectField["TargetTypeId"] as string;
+			var fieldName = objectField["FieldName"] as string;
+			var fieldTargetTypeFieldName = ( string )null;
+			var sourceFieldPortName = "f." + fieldName;
+			
+			if ( !string.IsNullOrEmpty( fieldTargetTypeId ) ) {
+				var relationshipString =
+					"\"" + objectId + "\":\"" + sourceFieldPortName + "\""
+					+ "->"
+					+ "\"" + fieldTargetTypeId
+						+ ( !string.IsNullOrEmpty( fieldTargetTypeFieldName ) ? "\":\"" + fieldTargetTypeFieldName : string.Empty ) + "\""
+					+ " ["
+					+ "label=\"" + objectField["Relationship"] +  "\""
+					+ "]"
+					+ Environment.NewLine;
+				@Html.Raw(relationshipString);
+			}
+		}
+	}
+}
