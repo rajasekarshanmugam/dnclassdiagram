@@ -17,7 +17,7 @@
 		<!--<PackageReference Include="Scriban" Version="4.0.1" />-->
 	</ItemGroup>
 	<ItemGroup>
-	  <ProjectReference Include="..\testclasslibrary\testclasslibrary.csproj" />
+	  <ProjectReference Include="..\TestClassLibrary\TestClassLibrary.csproj" />
 	</ItemGroup>
 	<ItemGroup>
 	  <None Update="Templates\Default\class.gif">

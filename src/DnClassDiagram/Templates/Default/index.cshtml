@@ -1,0 +1,128 @@
+@using System
+
+digraph "ClassDiagram"
+{
+	graph[overlap=false, splines=true]
+	fontname = "Segoe UI"
+	fontsize = 8
+	bgcolor = "#eeeefee"
+	tooltip = "Class Diagram"
+	concentrate=false
+
+	node [
+		shape = "record"
+		fontname = "Segoe UI"
+		fontsize = 10
+		bgcolor = "white"
+	]
+
+	edge [
+		fontname = "Segoe UI"
+		fontsize = 8
+	]
+
+	@* all classes *@
+	@foreach (var classInfo in Model.Classes.Values)
+	{
+		var objectId = classInfo.Id;
+		var objectName = classInfo.Name;
+		var objectPortName = "c." + objectId;
+
+		@:@objectId [
+			@:shape = none,
+			@:label = <
+				<table border="0" cellborder="0" cellspacing="0" cellpadding="5" align="left" bgcolor="darkgray">
+				<tr>
+					<td bgcolor="blue" valign="top" align="left"><img src="./Templates/Default/class.gif" /></td>
+					<td port="@objectPortName" bgcolor="blue" colspan="3" valign="middle">
+						<font color="white"><b>@objectName</b></font>
+					</td>
+				</tr>
+			@foreach( var property in classInfo.Properties ) {
+				var fieldId = property.Id;
+				var fieldName = property.Name;
+				var fieldType = property.Type;
+				var fieldPortName = "f." + fieldId;
+				<tr>
+					<td port="@fieldPortName"><img src="./Templates/Default/property.gif" /></td>
+					<td align="left">@fieldName</td>
+					<td align="left">
+						@fieldType
+					</td>
+					<td align="left">
+						@if (property.CanRead)
+						{
+							@:&nbsp;get;
+						}
+						@if (property.CanWrite)
+						{
+							@:&nbsp;set;
+						}
+					</td>
+				</tr>
+			}
+				</table>
+					@:>
+		@:]
+	}
+
+	@* 1-1 *@
+	edge [ arrowhead = "normal" headlabel = "0..1" taillabel = "0..1" color = "gray" ]
+
+	@foreach( var classInfo in Model.Classes.Values ){
+		var objectId = classInfo.Id;
+		var objectName = classInfo.Name;
+		var objectPortName = "c." + objectId;
+
+		@foreach( var property in classInfo.Properties ) {
+			var fieldName = property.Name;
+			var fieldTypeName = property.Type;
+			var fieldRuntimeTypeName = property.RuntimeType;
+
+			var fieldType = default(DnClassDiagram.Models.DNClassInfo);
+			if (!Model.Classes.TryGetValue(fieldRuntimeTypeName, out fieldType)) continue;
+			if (fieldType.Type.IsArray) continue;
+
+			var relationshipString =
+				"\"" + objectId + "\":\"" + "f." + fieldName + "\""
+				+ "->"
+				+ "\"" + fieldType.Id
+					+ "\":\"c." + fieldType.Id + "\""
+				+ " ["
+				+ "label=\"" + fieldName +  "\""
+				+ "]"
+				+ Environment.NewLine;
+			@Raw(relationshipString);
+		}
+	}
+
+	@* 1-many *@
+	edge [ arrowhead = "normal" headlabel = "0..1" taillabel = "0..*" color = "gray" ]
+
+	@foreach( var classInfo in Model.Classes.Values ){
+		var objectId = classInfo.Id;
+		var objectName = classInfo.Name;
+		var objectPortName = "c." + objectId;
+
+		@foreach( var property in classInfo.Properties ) {
+			var fieldName = property.Name;
+			var fieldTypeName = property.Type;
+			var fieldRuntimeTypeName = property.RuntimeType;
+
+			var fieldType = default(DnClassDiagram.Models.DNClassInfo);
+			if (!Model.Classes.TryGetValue(fieldRuntimeTypeName, out fieldType)) continue;
+			if (!fieldType.Type.IsArray) continue;
+
+			var relationshipString =
+				"\"" + objectId + "\":\"" + "f." + fieldName + "\""
+				+ "->"
+				+ "\"" + fieldType.Id
+					+ "\":\"c." + fieldType.Id + "\""
+				+ " ["
+				+ "label=\"" + fieldName + "\""
+				+ "]"
+				+ Environment.NewLine;
+			@Raw(relationshipString);
+		}
+	}
+}
