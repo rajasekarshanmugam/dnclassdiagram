@@ -17,10 +17,25 @@
 		<!--<PackageReference Include="Scriban" Version="4.0.1" />-->
 	</ItemGroup>
 	<ItemGroup>
+	  <ProjectReference Include="..\TestClassLibrary\TestClassLibrary.csproj" />
+	</ItemGroup>
+	<ItemGroup>
+	  <None Update="Templates\Default\class.gif">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Templates\Default\index.dot">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Templates\Default\index.cshtml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
 	  <None Update="rundot.bat">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	  <None Update="Templates\Default\index.cshtml">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="Templates\Default\property.gif">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>
